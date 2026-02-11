@@ -55,6 +55,7 @@ const googleBtn = document.getElementById('google-login-btn');
 if (googleBtn) googleBtn.addEventListener('click', loginWithGoogle);
 
 document.getElementById('restart-btn').addEventListener('click', startGame);
+document.getElementById('in-game-restart-btn').addEventListener('click', startGame);
 document.getElementById('logout-btn').addEventListener('click', logout);
 
 window.addEventListener('keydown', e => keys[e.code] = true);
@@ -69,13 +70,29 @@ canvas.addEventListener('touchend', e => { e.preventDefault(); touchX = null; })
 
 async function checkSession() {
     if (!supabaseClient) return;
+
+    // Listen to auth state changes (This handles redirects!)
+    supabaseClient.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+            if (session) {
+                user = session.user;
+                showScreen('game');
+                startGame();
+            }
+        } else if (event === 'SIGNED_OUT') {
+            user = null;
+            showScreen('auth');
+        }
+    });
+
+    // Check initial session
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
         user = session.user;
         showScreen('game');
         startGame();
     } else {
-        loadLeaderboard(); // Show leaderboard on auth screen
+        loadLeaderboard();
     }
 }
 
