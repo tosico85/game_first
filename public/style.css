@@ -1,0 +1,137 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f0f0f0;
+    font-family: 'Courier New', Courier, monospace; /* Retro font */
+    overflow: hidden; /* Prevent scrolling */
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.screen {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Auth Screen */
+.form-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+input {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #333;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #555;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+#auth-message {
+    color: red;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Game Screen */
+#game-screen {
+    position: relative;
+    background: #87CEEB; /* Sky blue background */
+}
+
+.header {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    pointer-events: none;
+}
+
+canvas {
+    display: block;
+    background: white;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+}
+
+.controls-hint {
+    position: absolute;
+    bottom: 10px;
+    font-size: 12px;
+    color: #555;
+    pointer-events: none;
+}
+
+/* Leaderboard Screen */
+#leaderboard-screen {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+}
+
+#leaderboard-list {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    max-width: 300px;
+    max-height: 50vh;
+    overflow-y: auto;
+    border: 2px solid #333;
+    margin: 1rem 0;
+}
+
+#leaderboard-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+}
+
+#leaderboard-list li:last-child {
+    border-bottom: none;
+}
+
+#leaderboard-list li:nth-child(1) { background-color: #ffd700; }
+#leaderboard-list li:nth-child(2) { background-color: #c0c0c0; }
+#leaderboard-list li:nth-child(3) { background-color: #cd7f32; }

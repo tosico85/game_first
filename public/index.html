@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>똥피하기 게임 (Dodge the Poop)</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+    <div id="game-container">
+        <!-- Auth Screen -->
+        <div id="auth-screen" class="screen">
+            <h1>💩 Dodge the Poop 💩</h1>
+            <div class="auth-box">
+                <button id="google-login-btn" class="btn google-btn">구글 로그인 (Google Login)</button>
+                <p id="auth-message"></p>
+            </div>
+            <div class="leaderboard-preview">
+                <h3>Top Scores</h3>
+                <ul id="preview-leaderboard-list"></ul>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen hidden">
+            <div class="header">
+                <span id="player-name">Player</span>
+                <span id="score-display">Score: 0</span>
+            </div>
+            <canvas id="game-canvas"></canvas>
+            <div class="controls-hint">PC: 방향키 / Mobile: 좌우 터치</div>
+        </div>
+
+        <!-- Game Over / Leaderboard Screen -->
+        <div id="leaderboard-screen" class="screen hidden">
+            <h1>Game Over</h1>
+            <h2 id="final-score">Score: 0</h2>
+            <button id="restart-btn">다시 하기</button>
+
+            <h3>명예의 전당 (Top 10)</h3>
+            <ul id="leaderboard-list">
+                <!-- Leaderboard items will be injected here -->
+            </ul>
+            <button id="logout-btn">로그아웃</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+
+</html>
