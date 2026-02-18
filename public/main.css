@@ -152,8 +152,8 @@ canvas {
     padding: 0;
     width: 100%;
     max-width: 300px;
-    max-height: 50vh;
-    overflow-y: auto;
+    /* max-height: 50vh; REMOVED to allow full screen scroll */
+    /* overflow-y: auto; REMOVED */
     border: 2px solid #333;
     margin: 1rem 0;
 }
