@@ -76,6 +76,7 @@ document.querySelectorAll('.game-btn').forEach(btn => {
 
 function showScreen(screenName) {
     console.log(`Showing screen: ${screenName}`);
+    // alert(`ShowScreen: ${screenName}`); // Debug M
 
     const screens = {
         auth: authScreen,
@@ -97,13 +98,12 @@ function showScreen(screenName) {
     if (target) {
         target.classList.remove('hidden'); // Remove !important class
         target.style.display = 'flex';     // Set display flex
+        // alert(`Target ${screenName} visible`); // Debug M
     }
 }
 
 function startGame(GameClass) {
     console.log('Starting game...');
-    // Explicit alert to debug auto-start
-    // alert('게임이 시작됩니다! (Game Starting)');
     showScreen('game');
     gameManager.startGame(GameClass, (score) => {
         handleGameOver(score);
@@ -122,15 +122,21 @@ function handleGameOver(score) {
 
 async function checkSession() {
     console.log('Checking session...');
+    // alert('CheckSession Start'); // Debug M
+
     // Log current URL state for debug
     console.log('URL Hash:', window.location.hash);
     console.log('URL Search:', window.location.search);
 
-    if (!supabaseClient) return;
+    if (!supabaseClient) {
+        alert('FATAL: Supabase Client not initialized');
+        return;
+    }
 
     // 1. Setup Listener FIRST to catch any events during initializing
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         console.log(`Auth event: ${event}`);
+        // alert(`Auth Event: ${event}`); // Debug M
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
             if (session) {
                 console.log('Signed In Event - User:', session.user.email);
@@ -151,6 +157,7 @@ async function checkSession() {
         window.location.search.includes('code=')) {
 
         console.log('Auth token/code detected in URL. Waiting for Supabase to process...');
+        // alert('Token URL detected'); // Debug M
 
         // Show a temporary loading msg on Auth screen if possible, or just don't show Auth form yet
         if (authScreen) {
@@ -165,14 +172,22 @@ async function checkSession() {
     }
 
     // 3. Normal Session Check (for returning users without partial URL)
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session) {
-        console.log('Session found immediately', session.user.email);
-        user = session.user;
-        showScreen('menu');
-    } else {
-        console.log('No immediate session and no token in URL.');
-        showScreen('auth');
+    try {
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+        if (error) alert(`Session Error: ${error.message}`);
+
+        if (session) {
+            console.log('Session found immediately', session.user.email);
+            // alert(`Session Found: ${session.user.email}`); // Debug M
+            user = session.user;
+            showScreen('menu');
+        } else {
+            console.log('No immediate session and no token in URL.');
+            // alert('No Session Found'); // Debug M
+            showScreen('auth');
+        }
+    } catch (e) {
+        alert(`CheckSession Exception: ${e}`);
     }
 }
 
