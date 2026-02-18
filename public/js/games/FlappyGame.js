@@ -35,6 +35,7 @@ export class FlappyGame {
 
         this.keys = {};
         this.canJump = true;
+        this.gameState = 'ready'; // ready, playing
     }
 
     resizeCanvas() {
@@ -48,13 +49,16 @@ export class FlappyGame {
     }
 
     handleInput(e) {
-        if (e.type === 'keydown' && e.code === 'Space') {
-            this.jump();
+        // Prevent default for game interactions
+        if ((e.type === 'keydown' && e.code === 'Space') || e.type === 'touchstart') {
             e.preventDefault();
-        }
-        if (e.type === 'touchstart') {
-            this.jump();
-            e.preventDefault();
+
+            if (this.gameState === 'ready') {
+                this.gameState = 'playing';
+                this.jump();
+            } else if (this.gameState === 'playing') {
+                this.jump();
+            }
         }
     }
 
@@ -63,14 +67,25 @@ export class FlappyGame {
     }
 
     update(dt) {
+        if (this.gameState === 'ready') {
+            // Hover effect
+            this.bird.y = this.GAME_HEIGHT / 2 + Math.sin(Date.now() / 300) * 10;
+            return;
+        }
+
         // Physics
         this.bird.vy += this.bird.gravity;
         this.bird.y += this.bird.vy;
 
         // Ground/Ceiling
-        if (this.bird.y + this.bird.height > this.GAME_HEIGHT || this.bird.y < 0) {
+        if (this.bird.y + this.bird.height > this.GAME_HEIGHT) {
             this.onGameOver(this.score);
             return;
+        }
+        // Cap ceiling (don't die, just clamp)
+        if (this.bird.y < 0) {
+            this.bird.y = 0;
+            this.bird.vy = 0;
         }
 
         // Move Pipes
@@ -150,5 +165,15 @@ export class FlappyGame {
 
         // Score
         document.getElementById('score-display').textContent = `Score: ${this.score}`;
+
+        // Get Ready Text
+        if (this.gameState === 'ready') {
+            this.ctx.fillStyle = 'white';
+            this.ctx.font = '40px Arial';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText("Get Ready!", this.GAME_WIDTH / 2, this.GAME_HEIGHT / 2 - 50);
+            this.ctx.font = '20px Arial';
+            this.ctx.fillText("Tap or Space to Jump", this.GAME_WIDTH / 2, this.GAME_HEIGHT / 2 + 50);
+        }
     }
 }
