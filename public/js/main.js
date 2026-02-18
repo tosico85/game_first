@@ -110,34 +110,58 @@ function handleGameOver(score) {
 
 async function checkSession() {
     console.log('Checking session...');
-    // alert('세션 확인 중...'); // debug
+    // Log current URL state for debug
+    console.log('URL Hash:', window.location.hash);
+    console.log('URL Search:', window.location.search);
+
     if (!supabaseClient) return;
 
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session) {
-        console.log('Session found', session.user.email);
-        // alert('로그인 확인됨! 메뉴로 이동합니다. (LoggedIn -> Menu)');
-        user = session.user;
-        showScreen('menu');
-    } else {
-        console.log('No session');
-        showScreen('auth');
-        // Removed preview loading to avoid confusion/errors during debug
-        // loadLeaderboard('dodge', true); 
-    }
-
+    // 1. Setup Listener FIRST to catch any events during initializing
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         console.log(`Auth event: ${event}`);
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
             if (session) {
+                console.log('Signed In Event - User:', session.user.email);
                 user = session.user;
                 showScreen('menu');
             }
         } else if (event === 'SIGNED_OUT') {
+            console.log('Signed Out Event');
             user = null;
             showScreen('auth');
         }
     });
+
+    // 2. Check explicitly for Redirect/Token signals in URL
+    // If we see access_token or code, we show a "Processing" state and WAIT.
+    if (window.location.hash.includes('access_token') ||
+        window.location.hash.includes('error_description') ||
+        window.location.search.includes('code=')) {
+
+        console.log('Auth token/code detected in URL. Waiting for Supabase to process...');
+
+        // Show a temporary loading msg on Auth screen if possible, or just don't show Auth form yet
+        if (authScreen) {
+            const authMsg = document.getElementById('auth-message');
+            if (authMsg) authMsg.textContent = "로그인 처리 중입니다... (Processing Login)";
+            showScreen('auth'); // Keep on auth screen but with message
+            // Hide buttons?
+            const authBox = document.querySelector('.auth-box');
+            if (authBox) authBox.style.display = 'none'; // Temporarily hide buttons
+        }
+        return; // Don't call getSession manually, let the client handle the URL
+    }
+
+    // 3. Normal Session Check (for returning users without partial URL)
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) {
+        console.log('Session found immediately', session.user.email);
+        user = session.user;
+        showScreen('menu');
+    } else {
+        console.log('No immediate session and no token in URL.');
+        showScreen('auth');
+    }
 }
 
 async function loginWithGoogle() {
