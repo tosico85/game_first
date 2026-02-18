@@ -6,6 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>똥피하기 게임 (Dodge the Poop)</title>
     <link rel="stylesheet" href="main.css">
+    <style>
+        /* Critical CSS to prevent FOUC or external CSS failure */
+        .hidden {
+            display: none !important;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        /* Default all screens to hidden */
+        #auth-screen {
+            display: flex;
+        }
+
+        /* Show auth by default until JS takes over */
+    </style>
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>

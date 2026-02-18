@@ -76,24 +76,27 @@ document.querySelectorAll('.game-btn').forEach(btn => {
 
 function showScreen(screenName) {
     console.log(`Showing screen: ${screenName}`);
-    // Hide all - add 'hidden' class and reset display style
-    [authScreen, menuScreen, gameScreen, leaderboardScreen].forEach(el => {
+
+    const screens = {
+        auth: authScreen,
+        menu: menuScreen,
+        game: gameScreen,
+        leaderboard: leaderboardScreen
+    };
+
+    // 1. Hide ALL screens
+    Object.values(screens).forEach(el => {
         if (el) {
-            el.classList.add('hidden');
-            el.style.display = ''; // Clear inline style so class takes over
+            el.classList.add('hidden'); // Add !important hidden class
+            el.style.display = 'none';  // Double tap with inline style
         }
     });
 
-    // Show specific - remove 'hidden' class and set flex
-    let targetEl = null;
-    if (screenName === 'auth') targetEl = authScreen;
-    else if (screenName === 'menu') targetEl = menuScreen;
-    else if (screenName === 'game') targetEl = gameScreen;
-    else if (screenName === 'leaderboard') targetEl = leaderboardScreen;
-
-    if (targetEl) {
-        targetEl.classList.remove('hidden');
-        targetEl.style.display = 'flex';
+    // 2. Show TARGET screen
+    const target = screens[screenName];
+    if (target) {
+        target.classList.remove('hidden'); // Remove !important class
+        target.style.display = 'flex';     // Set display flex
     }
 }
 
