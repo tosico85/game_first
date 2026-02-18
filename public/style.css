@@ -32,6 +32,10 @@ html {
     display: none !important;
 }
 
+h1 {
+    text-align: center;
+}
+
 /* Auth Screen */
 .form-container {
     background: white;
@@ -161,4 +165,51 @@ canvas {
 
 #leaderboard-list li:nth-child(3) {
     background-color: #cd7f32;
+}
+
+/* Game Selection Grid */
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+    width: 100%;
+    max-width: 400px;
+}
+
+.game-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: white;
+    border: 2px solid #333;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.game-btn:active {
+    transform: scale(0.95);
+}
+
+.game-btn .icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.game-btn .label {
+    font-weight: bold;
+    color: #333;
+}
+
+.secondary-btn {
+    background: #7f8c8d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+    cursor: pointer;
 }
