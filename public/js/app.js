@@ -26,6 +26,7 @@ let selectedGameClass = null;
 
 // --- Init ---
 checkSession();
+setupMobileControls(); // Bind touch buttons
 
 // --- Event Listeners ---
 const googleBtn = document.getElementById('google-login-btn');
@@ -73,10 +74,64 @@ document.querySelectorAll('.game-btn').forEach(btn => {
 
 
 // --- Functions ---
+function setupMobileControls() {
+    // Helper to simulate key events
+    const triggerKey = (code) => {
+        const event = new KeyboardEvent('keydown', { code: code });
+        window.dispatchEvent(event);
+    };
+
+    // 2-Button Controls
+    const leftBtn = document.getElementById('left-btn');
+    const rightBtn = document.getElementById('right-btn');
+    if (leftBtn) {
+        leftBtn.addEventListener('touchstart', (e) => { e.preventDefault(); triggerKey('ArrowLeft'); });
+        leftBtn.addEventListener('mousedown', (e) => { e.preventDefault(); triggerKey('ArrowLeft'); });
+    }
+    if (rightBtn) {
+        rightBtn.addEventListener('touchstart', (e) => { e.preventDefault(); triggerKey('ArrowRight'); });
+        rightBtn.addEventListener('mousedown', (e) => { e.preventDefault(); triggerKey('ArrowRight'); });
+    }
+
+    // D-Pad Controls
+    const bindDpad = (id, code) => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); triggerKey(code); });
+            btn.addEventListener('mousedown', (e) => { e.preventDefault(); triggerKey(code); });
+        }
+    };
+    bindDpad('d-up', 'ArrowUp');
+    bindDpad('d-down', 'ArrowDown');
+    bindDpad('d-left', 'ArrowLeft');
+    bindDpad('d-right', 'ArrowRight');
+    bindDpad('d-center', 'Space');
+}
+
+function updateMobileControlsUI(gameType) {
+    const mobileContainer = document.getElementById('mobile-controls');
+    const simpleControls = document.getElementById('controls-simple');
+    const dpadControls = document.getElementById('controls-dpad');
+
+    // Reset
+    mobileContainer.classList.add('hidden');
+    simpleControls.classList.add('hidden');
+    dpadControls.classList.add('hidden');
+
+    // Only show if we assume mobile usage or screen width is small? 
+    // For now, let's just make it visible. CSS pointer-events:none handles the overlay transparency.
+    mobileContainer.classList.remove('hidden');
+
+    if (gameType === 'snake') {
+        dpadControls.classList.remove('hidden');
+    } else if (['dodge', 'brick', 'jump'].includes(gameType)) {
+        simpleControls.classList.remove('hidden');
+    }
+    // Flappy hidden by default (tap anywhere)
+}
 
 function showScreen(screenName) {
     console.log(`Showing screen: ${screenName}`);
-    // alert(`ShowScreen: ${screenName}`); // Debug M
 
     const screens = {
         auth: authScreen,
@@ -98,13 +153,16 @@ function showScreen(screenName) {
     if (target) {
         target.classList.remove('hidden'); // Remove !important class
         target.style.display = 'flex';     // Set display flex
-        // alert(`Target ${screenName} visible`); // Debug M
     }
 }
 
 function startGame(GameClass) {
     console.log('Starting game...');
     showScreen('game');
+
+    // Show correct mobile controls
+    updateMobileControlsUI(currentGameType.value);
+
     gameManager.startGame(GameClass, (score) => {
         handleGameOver(score);
     });
@@ -122,21 +180,19 @@ function handleGameOver(score) {
 
 async function checkSession() {
     console.log('Checking session...');
-    // alert('CheckSession Start'); // Debug M
 
     // Log current URL state for debug
     console.log('URL Hash:', window.location.hash);
     console.log('URL Search:', window.location.search);
 
     if (!supabaseClient) {
-        alert('FATAL: Supabase Client not initialized');
+        console.error('FATAL: Supabase Client not initialized');
         return;
     }
 
     // 1. Setup Listener FIRST to catch any events during initializing
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         console.log(`Auth event: ${event}`);
-        // alert(`Auth Event: ${event}`); // Debug M
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
             if (session) {
                 console.log('Signed In Event - User:', session.user.email);
@@ -157,7 +213,6 @@ async function checkSession() {
         window.location.search.includes('code=')) {
 
         console.log('Auth token/code detected in URL. Waiting for Supabase to process...');
-        // alert('Token URL detected'); // Debug M
 
         // Show a temporary loading msg on Auth screen if possible, or just don't show Auth form yet
         if (authScreen) {
@@ -174,20 +229,18 @@ async function checkSession() {
     // 3. Normal Session Check (for returning users without partial URL)
     try {
         const { data: { session }, error } = await supabaseClient.auth.getSession();
-        if (error) alert(`Session Error: ${error.message}`);
+        if (error) console.error(`Session Error: ${error.message}`);
 
         if (session) {
             console.log('Session found immediately', session.user.email);
-            // alert(`Session Found: ${session.user.email}`); // Debug M
             user = session.user;
             showScreen('menu');
         } else {
             console.log('No immediate session and no token in URL.');
-            // alert('No Session Found'); // Debug M
             showScreen('auth');
         }
     } catch (e) {
-        alert(`CheckSession Exception: ${e}`);
+        console.error(`CheckSession Exception: ${e}`);
     }
 }
 

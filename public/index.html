@@ -23,15 +23,6 @@
 
         /* Show auth by default until JS takes over */
     </style>
-    <script>
-        window.onerror = function (msg, url, line, col, error) {
-            alert("Error: " + msg + "\nurl: " + url + "\nline: " + line);
-            return false;
-        };
-        window.addEventListener('unhandledrejection', function (event) {
-            alert("Unhandled Rejection: " + event.reason);
-        });
-    </script>
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -89,7 +80,26 @@
                     style="padding: 5px 10px; font-size: 14px; margin-left: auto;">다시하기</button>
             </div>
             <canvas id="game-canvas"></canvas>
-            <div class="controls-hint">PC: 방향키 / Mobile: 좌우 터치</div>
+
+            <!-- Mobile Controls Container -->
+            <div id="mobile-controls" class="hidden">
+                <!-- Dynamic controls injected by JS or toggled -->
+
+                <!-- 2-Button Layout (Default) -->
+                <div id="controls-simple" class="controls-2btn hidden">
+                    <button id="left-btn" class="control-btn">⬅️</button>
+                    <button id="right-btn" class="control-btn">➡️</button>
+                </div>
+
+                <!-- D-Pad Layout (Snake) -->
+                <div id="controls-dpad" class="d-pad hidden">
+                    <button id="d-up" class="d-btn d-up">⬆️</button>
+                    <button id="d-left" class="d-btn d-left">⬅️</button>
+                    <button id="d-center" class="d-btn d-center">●</button>
+                    <button id="d-right" class="d-btn d-right">➡️</button>
+                    <button id="d-down" class="d-btn d-down">⬇️</button>
+                </div>
+            </div>
         </div>
 
         <!-- Game Over / Leaderboard Screen -->
