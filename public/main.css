@@ -7,8 +7,7 @@ html {
     background-color: #f0f0f0;
     font-family: 'Courier New', Courier, monospace;
     /* Retro font */
-    overflow: hidden;
-    /* Prevent scrolling on body, handle per-screen */
+    /* overflow: hidden; Removed global hidden, handle per-screen */
 }
 
 * {
@@ -26,14 +25,16 @@ html {
 
 .screen {
     width: 100%;
-    height: 100%;
+    height: 100dvh;
+    /* Use dynamic viewport height */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     /* Start from top to allow scroll */
     padding: 20px;
-    /* Add padding for breathing room */
+    padding-bottom: 80px;
+    /* Extra padding for bottom buttons/bars */
     overflow-y: auto;
     /* Allow scrolling on mobile */
     -webkit-overflow-scrolling: touch;
@@ -97,6 +98,11 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    height: 100%;
+    /* Fallback */
+    height: 100dvh;
+    /* Prevent address bar resize issues during game */
     overflow: hidden;
     /* Game screen must NOT scroll */
     padding: 0;
