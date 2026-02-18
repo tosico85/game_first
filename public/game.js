@@ -40,10 +40,26 @@ const keys = {};
 let touchX = null;
 
 // --- Initialization ---
+// --- Initialization ---
+const GAME_WIDTH = 480;
+const GAME_HEIGHT = 800;
+
 function resizeCanvas() {
-    canvas.width = window.innerWidth > 480 ? 480 : window.innerWidth;
-    canvas.height = window.innerHeight > 800 ? 800 : window.innerHeight;
-    player.y = canvas.height - player.height - 25;
+    const scaleX = window.innerWidth / GAME_WIDTH;
+    const scaleY = window.innerHeight / GAME_HEIGHT;
+    const scale = Math.min(scaleX, scaleY); // Fit within screen
+
+    canvas.width = GAME_WIDTH;
+    canvas.height = GAME_HEIGHT;
+
+    canvas.style.width = `${GAME_WIDTH * scale}px`;
+    canvas.style.height = `${GAME_HEIGHT * scale}px`;
+
+    // Player initial position (bottom center-ish)
+    if (!isPlaying) {
+        player.x = GAME_WIDTH / 2 - player.width / 2;
+        player.y = GAME_HEIGHT - player.height - 25;
+    }
 }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
@@ -176,13 +192,18 @@ function showScreen(screenName) {
     if (screenName === 'auth') authScreen.classList.remove('hidden');
     else if (screenName === 'game') gameScreen.classList.remove('hidden');
     else if (screenName === 'leaderboard') leaderboardScreen.classList.remove('hidden');
+
+    if (screenName === 'game') {
+        resizeCanvas(); // Ensure correct size when showing game
+    }
 }
 
 function startGame() {
     showScreen('game');
     score = 0;
     poops = [];
-    player.x = canvas.width / 2 - player.width / 2;
+    player.x = GAME_WIDTH / 2 - player.width / 2;
+    player.y = GAME_HEIGHT - player.height - 25; // Reset Y position properly
     player.vx = 0;
     document.getElementById('score-display').textContent = `Score: ${score}`;
 
@@ -236,9 +257,14 @@ function update(dt) {
     // Touch
     if (touchX !== null) {
         const rect = canvas.getBoundingClientRect();
-        const relX = touchX - rect.left;
+        // Calculate X relative to the canvas, then scale it to internal coordinate system
+        const scaleX = GAME_WIDTH / rect.width;
+        const relX = (touchX - rect.left) * scaleX;
+
         const center = player.x + player.width / 2;
         const diff = relX - center;
+
+        // Deadzone to prevent jitter
         if (Math.abs(diff) > 5) {
             player.vx += (diff > 0 ? player.speed * 2 : -player.speed * 2);
         }
