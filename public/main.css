@@ -8,7 +8,12 @@ html {
     font-family: 'Courier New', Courier, monospace;
     /* Retro font */
     overflow: hidden;
-    /* Prevent scrolling */
+    /* Prevent scrolling on body, handle per-screen */
+}
+
+* {
+    box-sizing: border-box;
+    /* Fix mobile horizontal skew */
 }
 
 #app {
@@ -25,7 +30,13 @@ html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    /* Start from top to allow scroll */
+    padding: 20px;
+    /* Add padding for breathing room */
+    overflow-y: auto;
+    /* Allow scrolling on mobile */
+    -webkit-overflow-scrolling: touch;
 }
 
 .hidden {
@@ -87,6 +98,9 @@ button:hover {
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    /* Game screen must NOT scroll */
+    padding: 0;
+    /* Remove padding for full edge-to-edge game */
 }
 
 .header {

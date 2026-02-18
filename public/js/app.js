@@ -118,16 +118,13 @@ function updateMobileControlsUI(gameType) {
     simpleControls.classList.add('hidden');
     dpadControls.classList.add('hidden');
 
-    // Only show if we assume mobile usage or screen width is small? 
-    // For now, let's just make it visible. CSS pointer-events:none handles the overlay transparency.
-    mobileContainer.classList.remove('hidden');
-
+    // Only show for Snake (D-Pad)
     if (gameType === 'snake') {
+        mobileContainer.classList.remove('hidden');
         dpadControls.classList.remove('hidden');
-    } else if (['dodge', 'brick', 'jump'].includes(gameType)) {
-        simpleControls.classList.remove('hidden');
     }
-    // Flappy hidden by default (tap anywhere)
+    // For Dodge, Brick, Jump, Flappy: Hide everything.
+    // They handle touch natively (Dodge/Brick) or don't need buttons (Jump/Flappy).
 }
 
 function showScreen(screenName) {
