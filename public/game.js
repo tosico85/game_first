@@ -28,9 +28,9 @@ const player = {
     width: 30,
     height: 30,
     vx: 0,
-    speed: 0.5,
-    maxSpeed: 8,
-    friction: 0.92,
+    speed: 0.2,
+    maxSpeed: 5,
+    friction: 0.95,
     color: 'blue',
     animTick: 0
 };
@@ -276,7 +276,9 @@ function update(dt) {
 
     // Spawn
     spawnTimer += dt;
-    if (spawnTimer > 500) {
+    // Difficulty: Spawn faster as score increases (min 100ms)
+    const spawnThreshold = Math.max(100, 500 - score * 0.5);
+    if (spawnTimer > spawnThreshold) {
         spawnTimer = 0;
         const size = Math.random() * 20 + 20;
         poops.push({
@@ -284,7 +286,8 @@ function update(dt) {
             y: -size,
             width: size,
             height: size,
-            speed: Math.random() * 2 + 2 + (score * 0.01),
+            // Difficulty: Fall faster
+            speed: Math.random() * 3 + 3 + (score * 0.05),
             rotation: 0,
             rotSpeed: (Math.random() - 0.5) * 0.1
         });
