@@ -76,16 +76,25 @@ document.querySelectorAll('.game-btn').forEach(btn => {
 
 function showScreen(screenName) {
     console.log(`Showing screen: ${screenName}`);
-    // Hide all
+    // Hide all - add 'hidden' class and reset display style
     [authScreen, menuScreen, gameScreen, leaderboardScreen].forEach(el => {
-        if (el) el.style.display = 'none';
+        if (el) {
+            el.classList.add('hidden');
+            el.style.display = ''; // Clear inline style so class takes over
+        }
     });
 
-    // Show specific
-    if (screenName === 'auth' && authScreen) authScreen.style.display = 'flex';
-    else if (screenName === 'menu' && menuScreen) menuScreen.style.display = 'flex';
-    else if (screenName === 'game' && gameScreen) gameScreen.style.display = 'flex';
-    else if (screenName === 'leaderboard' && leaderboardScreen) leaderboardScreen.style.display = 'flex';
+    // Show specific - remove 'hidden' class and set flex
+    let targetEl = null;
+    if (screenName === 'auth') targetEl = authScreen;
+    else if (screenName === 'menu') targetEl = menuScreen;
+    else if (screenName === 'game') targetEl = gameScreen;
+    else if (screenName === 'leaderboard') targetEl = leaderboardScreen;
+
+    if (targetEl) {
+        targetEl.classList.remove('hidden');
+        targetEl.style.display = 'flex';
+    }
 }
 
 function startGame(GameClass) {
